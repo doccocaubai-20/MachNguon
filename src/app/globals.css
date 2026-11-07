@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FAF7F0;
+  --foreground: #1F2933;
+  --font-ui: "Be Vietnam Pro", system-ui, "Segoe UI", sans-serif;
+  --font-numeric: "JetBrains Mono Variable", Consolas, monospace;
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tối ưu kích thước nút bấm tối thiểu 48px cho người cao tuổi & thao tác di động */
+button, a.btn {
+  min-height: 44px;
+}
