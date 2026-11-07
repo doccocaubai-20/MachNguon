@@ -25,8 +25,18 @@ export default async function AssetsPage({ params, searchParams }: Props) {
   const personService = new PersonService(db);
 
   let workspaceData;
+  let persons: Awaited<ReturnType<PersonService["listPersons"]>> = [];
+  let assets: Awaited<ReturnType<AssetService["listAssets"]>> = [];
+
   try {
-    workspaceData = await wsService.getWorkspace(currentUser.id, workspaceId);
+    const [wsData, personsData, assetsData] = await Promise.all([
+      wsService.getWorkspace(currentUser.id, workspaceId),
+      personService.listPersons(currentUser.id, workspaceId),
+      assetService.listAssets(currentUser.id, workspaceId, { keyword: queryFilter }),
+    ]);
+    workspaceData = wsData;
+    persons = personsData;
+    assets = assetsData;
   } catch (err: any) {
     return (
       <div className="bg-white border border-red-200 rounded-2xl p-8 max-w-xl mx-auto text-center space-y-4">
@@ -45,15 +55,7 @@ export default async function AssetsPage({ params, searchParams }: Props) {
   const { workspace, currentMember } = workspaceData;
   const canUpload = hasPermission(currentMember.role, "asset:upload");
   const isAdmin = currentMember.role === "admin";
-
-  // Lấy danh sách người thân để gán cho tư liệu
-  const persons = await personService.listPersons(currentUser.id, workspaceId);
   const narratorsList = persons.map((p) => ({ id: p.id, fullName: p.full_name }));
-
-  // Lấy toàn bộ tư liệu để bộ lọc tab client chuyển đổi tức thì 0ms
-  const assets = await assetService.listAssets(currentUser.id, workspaceId, {
-    keyword: queryFilter,
-  });
 
   return (
     <div className="space-y-8">

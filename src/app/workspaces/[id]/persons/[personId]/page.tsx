@@ -46,18 +46,23 @@ export default async function PersonDetailPage({ params }: Props) {
   const canEdit = hasPermission(currentMember.role, "story:propose");
   const isAdmin = hasPermission(currentMember.role, "member:revoke");
 
-  let personData;
+  let personData: Awaited<ReturnType<PersonService["getPerson"]>>;
+  let context: Awaited<ReturnType<PersonService["getPersonKnowledgeContext"]>>;
+  let allPersons: Awaited<ReturnType<PersonService["listPersons"]>> = [];
   try {
-    personData = await personService.getPerson(currentUser.id, workspaceId, personId);
+    const [pData, ctxData, pList] = await Promise.all([
+      personService.getPerson(currentUser.id, workspaceId, personId),
+      personService.getPersonKnowledgeContext(currentUser.id, workspaceId, personId),
+      personService.listPersons(currentUser.id, workspaceId),
+    ]);
+    personData = pData;
+    context = ctxData;
+    allPersons = pList;
   } catch (err: any) {
     notFound();
   }
 
   const { person, relationships } = personData;
-  const context = await personService.getPersonKnowledgeContext(currentUser.id, workspaceId, personId);
-
-  // Lấy toàn bộ danh sách người thân khác trong kho để chọn khi thêm quan hệ
-  const allPersons = await personService.listPersons(currentUser.id, workspaceId);
   const candidatePersons = allPersons.filter((p) => p.id !== person.id);
 
   const relationshipLabels: Record<RelationshipType, string> = {

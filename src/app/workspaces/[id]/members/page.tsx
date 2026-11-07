@@ -17,8 +17,14 @@ export default async function WorkspaceMembersPage({ params }: Props) {
   const service = new WorkspaceService(db);
 
   let workspaceData;
+  let members: Awaited<ReturnType<WorkspaceService["getWorkspaceMembers"]>> = [];
   try {
-    workspaceData = await service.getWorkspace(currentUser.id, id);
+    const [wsData, membersData] = await Promise.all([
+      service.getWorkspace(currentUser.id, id),
+      service.getWorkspaceMembers(currentUser.id, id),
+    ]);
+    workspaceData = wsData;
+    members = membersData;
   } catch (err: any) {
     return (
       <div className="bg-white border border-red-200 rounded-2xl p-8 max-w-xl mx-auto text-center space-y-4">
@@ -45,9 +51,6 @@ export default async function WorkspaceMembersPage({ params }: Props) {
        ORDER BY created_at DESC`, [workspace.id]
     )).rows
     : [];
-
-  // Lấy danh sách thành viên
-  const members = await service.getWorkspaceMembers(currentUser.id, id);
 
   // Lấy danh sách audit events gần nhất
   const auditRes = await db.query<{

@@ -21,8 +21,14 @@ export default async function StoriesListPage({ params, searchParams }: Props) {
   const storyService = new StoryService(db);
 
   let workspaceData;
+  let stories: Awaited<ReturnType<StoryService["listStories"]>> = [];
   try {
-    workspaceData = await wsService.getWorkspace(currentUser.id, workspaceId);
+    const [wsData, storiesData] = await Promise.all([
+      wsService.getWorkspace(currentUser.id, workspaceId),
+      storyService.listStories(currentUser.id, workspaceId),
+    ]);
+    workspaceData = wsData;
+    stories = storiesData;
   } catch (err: any) {
     return (
       <div className="bg-white border border-red-200 rounded-2xl p-8 max-w-xl mx-auto text-center space-y-4">
@@ -40,9 +46,6 @@ export default async function StoriesListPage({ params, searchParams }: Props) {
 
   const { workspace, currentMember } = workspaceData;
   const canPropose = hasPermission(currentMember.role, "story:propose");
-
-  // Lấy toàn bộ danh sách câu chuyện để chuyển đổi tab tức thì 0ms
-  const stories = await storyService.listStories(currentUser.id, workspaceId);
 
   return (
     <div className="space-y-8">

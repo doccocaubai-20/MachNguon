@@ -18,8 +18,14 @@ export default async function PersonsListPage({ params }: Props) {
   const personService = new PersonService(db);
 
   let workspaceData;
+  let persons: Awaited<ReturnType<PersonService["listPersons"]>> = [];
   try {
-    workspaceData = await wsService.getWorkspace(currentUser.id, id);
+    const [wsData, personsData] = await Promise.all([
+      wsService.getWorkspace(currentUser.id, id),
+      personService.listPersons(currentUser.id, id),
+    ]);
+    workspaceData = wsData;
+    persons = personsData;
   } catch (err: any) {
     return (
       <div className="bg-white border border-red-200 rounded-2xl p-8 max-w-xl mx-auto text-center space-y-4">
@@ -37,8 +43,6 @@ export default async function PersonsListPage({ params }: Props) {
 
   const { workspace, currentMember } = workspaceData;
   const canEdit = hasPermission(currentMember.role, "story:propose");
-
-  const persons = await personService.listPersons(currentUser.id, id);
 
   return (
     <div className="space-y-8">

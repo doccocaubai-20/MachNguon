@@ -16,8 +16,12 @@ export default async function ManualsPage({ params }: ManualsPageProps) {
   const wsService = new WorkspaceService(db);
   const manualService = new ManualService(db);
 
-  const { workspace, currentMember } = await wsService.getWorkspace(userId, workspaceId);
-  const manuals = await manualService.listManuals(userId, workspaceId);
+  const [workspaceData, manuals] = await Promise.all([
+    wsService.getWorkspace(userId, workspaceId),
+    manualService.listManuals(userId, workspaceId),
+  ]);
+
+  const { workspace, currentMember } = workspaceData;
 
   const canCreate = ["admin", "contributor", "narrator"].includes(currentMember.role);
 

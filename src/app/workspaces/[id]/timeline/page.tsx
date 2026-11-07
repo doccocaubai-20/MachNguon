@@ -26,16 +26,19 @@ export default async function TimelinePage({ params, searchParams }: TimelinePag
   const personService = new PersonService(db);
   const timelineService = new TimelineService(db);
 
-  const { workspace, currentMember } = await wsService.getWorkspace(userId, workspaceId);
-  const persons = await personService.listPersons(userId, workspaceId);
-
   const filters = {
     person_id: sParams.person_id || undefined,
     importance: sParams.importance || undefined,
     query: sParams.query || undefined,
   };
 
-  const events = await timelineService.listEvents(userId, workspaceId, filters);
+  const [workspaceData, persons, events] = await Promise.all([
+    wsService.getWorkspace(userId, workspaceId),
+    personService.listPersons(userId, workspaceId),
+    timelineService.listEvents(userId, workspaceId, filters),
+  ]);
+
+  const { workspace, currentMember } = workspaceData;
   const canCreate = ["admin", "contributor", "narrator"].includes(currentMember.role);
 
   return (

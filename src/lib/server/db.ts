@@ -90,16 +90,28 @@ function wrapPGlite(pglite: PGlite): DatabaseExecutor {
   };
 }
 
+const globalForPg = globalThis as unknown as {
+  __machNguonPgPool?: Pool;
+};
+
+function getOrCreatePool(connectionString: string): Pool {
+  if (!globalForPg.__machNguonPgPool) {
+    globalForPg.__machNguonPgPool = new Pool({
+      connectionString,
+      ssl: { rejectUnauthorized: false },
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    });
+  }
+  return globalForPg.__machNguonPgPool;
+}
+
 async function initializeDatabase(): Promise<DatabaseExecutor> {
   const databaseUrl = process.env.DATABASE_URL;
 
   if (databaseUrl) {
-    const pool = new Pool({
-      connectionString: databaseUrl,
-      ssl: { rejectUnauthorized: false },
-      max: 10,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = getOrCreatePool(databaseUrl);
 
     const executor: DatabaseExecutor = {
       query: <T = any>(query: string, params?: any[]) => pool.query(query, params) as unknown as Promise<{ rows: T[] }>,
@@ -128,9 +140,24 @@ async function initializeDatabase(): Promise<DatabaseExecutor> {
     };
 
     try {
-      await runMigrations(executor);
-      if (demoMode || process.env.NODE_ENV !== "test") {
-        await seedDemoData(executor);
+      // Kiểm tra xem schema đã được tạo hay chưa: nếu đã có 'v1' thì bỏ qua hoàn toàn DDL & seed
+      let isInitialized = false;
+      try {
+        const check = await executor.query(
+          "SELECT 1 FROM _schema_migrations WHERE version = 'v1'"
+        );
+        if (check.rows.length > 0) {
+          isInitialized = true;
+        }
+      } catch {
+        isInitialized = false;
+      }
+
+      if (!isInitialized) {
+        await runMigrations(executor);
+        if (demoMode || process.env.NODE_ENV !== "test") {
+          await seedDemoData(executor);
+        }
       }
       return executor;
     } catch (error) {

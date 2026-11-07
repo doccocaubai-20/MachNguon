@@ -17,13 +17,17 @@ export default async function GraphPage({ params }: GraphPageProps) {
   const wsService = new WorkspaceService(db);
   const graphService = new GraphService(db);
 
-  const { workspace, currentMember } = await wsService.getWorkspace(userId, workspaceId);
-  const graph = await graphService.getFullGraph(userId, workspaceId, [
-    "confirmed",
-    "unverified",
-    "proposed",
+  const [workspaceData, graph, pendingClaims] = await Promise.all([
+    wsService.getWorkspace(userId, workspaceId),
+    graphService.getFullGraph(userId, workspaceId, [
+      "confirmed",
+      "unverified",
+      "proposed",
+    ]),
+    graphService.listPendingClaims(userId, workspaceId),
   ]);
-  const pendingClaims = await graphService.listPendingClaims(userId, workspaceId);
+
+  const { workspace, currentMember } = workspaceData;
 
   const canApprove = ["admin", "narrator"].includes(currentMember.role);
   const canCreate = ["admin", "contributor", "narrator"].includes(currentMember.role);
