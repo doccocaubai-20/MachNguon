@@ -209,7 +209,7 @@ export default async function PersonDetailPage({ params }: Props) {
               <div>
                 <h2 className="font-semibold text-lg leading-snug text-ink">Tri thức & Kỹ năng gắn với người thân</h2>
                 <p className="text-xs text-ink-muted">
-                  Kết nối trực tiếp từ Kho tư liệu (P03), Dòng thời gian (P05), Bản đồ (P06) và Tủ kinh nghiệm (P07).
+                  Tự động liên kết từ Kho tư liệu, Dòng thời gian, Bản đồ tri thức và Cẩm nang gia đình.
                 </p>
               </div>
               <span className="text-xs bg-cream-100 border border-cream-200 px-2.5 py-1 rounded-full text-ink font-semibold">

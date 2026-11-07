@@ -28,9 +28,9 @@ export function WorkspaceNavTabs({ workspaceId }: WorkspaceNavTabsProps) {
     { id: "assets", label: "Tư liệu gốc", href: `${baseUrl}/assets` },
     { id: "stories", label: "Lời kể", href: `${baseUrl}/stories` },
     { id: "timeline", label: "Niên biểu", href: `${baseUrl}/timeline` },
-    { id: "graph", label: "Đồ thị", href: `${baseUrl}/graph` },
+    { id: "graph", label: "Bản đồ tri thức", href: `${baseUrl}/graph` },
     { id: "manuals", label: "Cẩm nang", href: `${baseUrl}/manuals` },
-    { id: "search", label: "Trợ lý & AI", href: `${baseUrl}/search` },
+    { id: "search", label: "Trợ lý Ký ức", href: `${baseUrl}/search` },
     { id: "members", label: "Thành viên", href: `${baseUrl}/members` },
   ];
 

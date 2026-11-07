@@ -79,7 +79,7 @@ export default async function CreateStoryPage({ params }: Props) {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-ink">
-                Bản ghi âm nguồn gốc (P03)
+                Bản ghi âm nguồn gốc
               </label>
               <select
                 name="primary_asset_id"

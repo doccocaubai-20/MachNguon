@@ -10,7 +10,6 @@ import {
 import {
   askQuestionAction,
   searchVaultAction,
-  runBenchmarkAction,
   extractStoryWithAiAction,
   composeTributeWithAiAction,
 } from "./actions";
@@ -67,11 +66,6 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
   const [tributeDetails, setTributeDetails] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [tributeResult, setTributeResult] = useState<string | null>(null);
-
-  // Benchmark state
-  const [isRunningBenchmark, setIsRunningBenchmark] = useState(false);
-  const [benchmarkResult, setBenchmarkResult] = useState<any | null>(null);
-  const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   // Error state
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -163,21 +157,6 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
     }
   };
 
-  const handleRunBenchmark = async () => {
-    setIsRunningBenchmark(true);
-    try {
-      const res = await runBenchmarkAction(workspaceId);
-      if (res.success && res.data) {
-        setBenchmarkResult(res.data);
-        setShowBenchmarkModal(true);
-      } else {
-        alert(res.error || "Lỗi khi chạy benchmark");
-      }
-    } finally {
-      setIsRunningBenchmark(false);
-    }
-  };
-
   const getTypeBadge = (type: SearchResultType) => {
     switch (type) {
       case "person":
@@ -205,24 +184,14 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
               {workspaceName}
             </Link>
             <span>/</span>
-            <span className="text-forest font-medium">Trợ Lý Ký Ức & AI</span>
+            <span className="text-forest font-medium">Trợ Lý Ký Ức</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-ink">
-            Trợ Lý Ký Ức & Xưởng AI Mạch Nguồn
+            Trợ Lý Ký Ức Gia Đình
           </h1>
           <p className="text-sm text-ink-muted mt-1 max-w-2xl">
-            Tích hợp mô hình ngôn ngữ lớn <strong>Google Gemini 3.5 Flash</strong> cùng cơ chế đối chiếu chứng cứ gốc và bảo toàn trích dẫn.
+            Tra cứu thông tin, hỏi đáp đối chiếu nguồn gốc và đồng hành biên soạn gìn giữ ký ức người thân.
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleRunBenchmark}
-            disabled={isRunningBenchmark}
-            className="btn inline-flex items-center gap-2 bg-cream-100 hover:bg-cream-200 text-forest border border-forest/30 px-4 py-2.5 rounded-xl font-medium text-xs shadow-sm transition-all"
-          >
-            <span>{isRunningBenchmark ? "Đang kiểm định..." : "Kiểm tra chất lượng tri thức (20 câu)"}</span>
-          </button>
         </div>
       </div>
 
@@ -236,7 +205,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
               : "border-transparent text-stone-500 hover:text-stone-800"
           }`}
         >
-          <span>Hỏi đáp ký ức & Tìm kiếm đa miền</span>
+          <span>Hỏi đáp ký ức & Tìm kiếm</span>
         </button>
 
         <button
@@ -247,9 +216,9 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
               : "border-transparent text-stone-500 hover:text-stone-800"
           }`}
         >
-          <span>Xưởng biên soạn AI</span>
+          <span>Xưởng biên soạn di sản</span>
           <span className="text-[10px] bg-forest/10 text-forest px-2 py-0.5 rounded-full font-bold">
-            Gemini 3.5 Flash
+            Trợ lý Thông minh
           </span>
         </button>
       </div>
@@ -278,7 +247,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
 
               {/* AI Mode Switch */}
               <div className="flex items-center gap-2 bg-stone-50 border border-stone-200 px-3 py-1.5 rounded-2xl">
-                <span className="text-xs font-medium text-stone-700">Mô hình Gemini AI:</span>
+                <span className="text-xs font-medium text-stone-700">Trợ lý AI:</span>
                 <button
                   type="button"
                   onClick={() => setEnableAi(!enableAi)}
@@ -288,7 +257,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
                       : "bg-stone-200 text-stone-600 hover:bg-stone-300"
                   }`}
                 >
-                  {enableAi ? "Đang bật (Gemini 3.5 Flash)" : "Tắt (Chỉ dùng dữ liệu thô)"}
+                  {enableAi ? "Đang bật" : "Tắt"}
                 </button>
               </div>
             </div>
@@ -347,7 +316,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
                   <div className="flex items-center gap-2">
                     {qaResponse.ai_generated && (
                       <span className="inline-flex items-center text-xs bg-forest/10 text-forest border border-forest/20 px-3 py-1 rounded-full font-semibold">
-                        Gemini 3.5 Flash
+                        Trợ lý Ký ức
                       </span>
                     )}
 
@@ -382,7 +351,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
                         onClick={() => setShowBaseAnswer(!showBaseAnswer)}
                         className="text-forest hover:underline font-semibold"
                       >
-                        {showBaseAnswer ? "Ẩn dữ liệu đối soát CSDL ↑" : "Xem dữ liệu đối soát CSDL gốc ↓"}
+                        {showBaseAnswer ? "Ẩn bản trích dẫn gốc ↑" : "Xem bản trích dẫn gốc ↓"}
                       </button>
                       <span className="text-[11px] text-stone-400">
                         Được tổng hợp từ {qaResponse.citations.length} nguồn xác thực
@@ -391,8 +360,8 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
                   )}
 
                   {showBaseAnswer && qaResponse.base_answer && (
-                    <div className="mt-2 p-3 bg-white/80 rounded-xl border border-stone-200 text-xs font-mono text-stone-700">
-                      <strong>Bản trích xuất CSDL nguyên bản:</strong>
+                    <div className="mt-2 p-3 bg-white/80 rounded-xl border border-stone-200 text-xs text-stone-700">
+                      <strong>Bản trích dẫn tư liệu gốc:</strong>
                       <p className="mt-1">{qaResponse.base_answer}</p>
                     </div>
                   )}
@@ -536,7 +505,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
         </div>
       )}
 
-      {/* VIEW 2: AI STUDIO (GEMINI 3.5 FLASH) */}
+      {/* VIEW 2: AI STUDIO */}
       {activeMainTab === "ai-studio" && (
         <div className="space-y-8 animate-in fade-in duration-200">
           {/* Banner giới thiệu AI Studio */}
@@ -544,20 +513,20 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-forest text-white text-[11px] font-bold">
-                  Gemini 3.5 Flash
+                  Trợ lý Thông minh
                 </span>
                 <h2 className="font-serif font-bold text-lg text-ink">
-                  Xưởng Sáng Tạo & Biên Tập Ký Ức AI
+                  Xưởng Sáng Tạo & Biên Tập Di Sản
                 </h2>
               </div>
               <p className="text-xs text-ink-muted max-w-xl leading-relaxed">
-                Ứng dụng mô hình AI của Google để tự động bóc tách sự kiện từ lời kể thô, tóm tắt bài học truyền đời của cha ông và chắp bút những trang hồi ký trang trọng.
+                Tự động bóc tách sự kiện từ lời kể thô, tóm tắt bài học truyền đời của cha ông và chắp bút những trang hồi ký trang trọng.
               </p>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-semibold text-forest">API Sẵn sàng</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <span className="text-xs font-semibold text-forest">Sẵn sàng hỗ trợ</span>
             </div>
           </div>
 
@@ -721,7 +690,7 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
                 {isComposing ? (
                   <span>Đang chắp bút bài tri ân...</span>
                 ) : (
-                  <span>Chắp bút bài tri ân với Gemini AI</span>
+                  <span>Chắp bút bài tri ân người thân</span>
                 )}
               </button>
 
@@ -746,105 +715,6 @@ export default function SearchClient({ workspaceId, workspaceName }: SearchClien
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL ACCEPTANCE BENCHMARK 20 CÂU HỎI */}
-      {showBenchmarkModal && benchmarkResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-start justify-between border-b border-stone-200 pb-4">
-              <div>
-                <span className="text-xs uppercase tracking-wider text-forest font-bold">
-                  Acceptance Benchmark Verification
-                </span>
-                <h3 className="font-serif font-bold text-xl sm:text-2xl text-ink">
-                  Kết Quả Kiểm Định 20 Câu Hỏi (P08)
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowBenchmarkModal(false)}
-                className="px-3 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-600 font-medium text-xs transition-colors"
-              >
-                Đóng
-              </button>
-            </div>
-
-            {/* Scorecard */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-              <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200">
-                <div className="text-2xl font-serif font-bold text-ink">
-                  {benchmarkResult.total_questions}
-                </div>
-                <div className="text-xs text-ink-muted">Tổng số câu kiểm định</div>
-              </div>
-
-              <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
-                <div className="text-2xl font-serif font-bold text-emerald-700">
-                  {benchmarkResult.answered_correctly} / 12
-                </div>
-                <div className="text-xs text-emerald-800">Trả lời đúng có căn cứ</div>
-              </div>
-
-              <div className="p-4 bg-forest/10 rounded-2xl border border-forest/20">
-                <div className="text-2xl font-serif font-bold text-forest">
-                  {benchmarkResult.no_hallucination_verified} / 8
-                </div>
-                <div className="text-xs text-forest">Không bịa đặt (Zero-Hallucination)</div>
-              </div>
-            </div>
-
-            <div className={`p-4 rounded-2xl border text-sm font-medium flex items-center gap-2 ${
-              benchmarkResult.passed
-                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                : "bg-red-50 text-red-800 border-red-300"
-            }`}>
-              <span>
-                {benchmarkResult.passed
-                  ? "ĐẠT CHUẨN: Hệ thống vượt qua toàn bộ tiêu chuẩn nghiệm thu P08 (Trả lời >= 10/12 và Zero-Hallucination 8/8)."
-                  : "Chưa đạt tiêu chuẩn kiểm định."}
-              </span>
-            </div>
-
-            {/* Chi tiết từng câu hỏi */}
-            <div className="space-y-2">
-              <h4 className="font-serif font-bold text-sm text-ink">Chi tiết kiểm định từng trường hợp:</h4>
-              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
-                {benchmarkResult.results.map((r: any, idx: number) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-3 rounded-xl border border-stone-200 bg-stone-50/50 text-xs"
-                  >
-                    <div className="space-y-0.5 max-w-md">
-                      <div className="font-medium text-ink">
-                        {idx + 1}. {r.question}
-                      </div>
-                      <div className="text-[11px] text-ink-muted">
-                        Phân loại: <span className="capitalize font-mono">{r.category}</span> | Kỳ vọng có dữ liệu: {r.expected_has_data ? "Có" : "Không"}
-                      </div>
-                    </div>
-
-                    <div className="shrink-0 flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                        r.passed ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-                      }`}>
-                        {r.passed ? "ĐẠT" : "CHƯA ĐẠT"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2 border-t border-stone-100">
-              <button
-                onClick={() => setShowBenchmarkModal(false)}
-                className="btn bg-stone-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-medium"
-              >
-                Đóng
-              </button>
             </div>
           </div>
         </div>

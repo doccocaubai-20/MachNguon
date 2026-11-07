@@ -217,14 +217,14 @@ export default async function WorkspaceDetailPage({ params }: Props) {
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono font-semibold tracking-wider text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-lg">
-                06 • ĐỒ THỊ
+                06 • BẢN ĐỒ TRI THỨC
               </span>
             </div>
             <h3 className="font-serif font-bold text-lg text-ink group-hover:text-forest transition-colors">
               Bản đồ tri thức
             </h3>
             <p className="text-xs text-ink-muted leading-relaxed">
-              Đồ thị liên kết mạng lưới người thân, quê hương, sự kiện và kỹ năng có nguồn đối chiếu.
+              Bản đồ liên kết mạng lưới người thân, quê hương, sự kiện và kỹ năng có nguồn đối chiếu.
             </p>
             <span className="text-xs text-forest font-semibold inline-block pt-1">Mở phân hệ →</span>
           </Link>
@@ -255,17 +255,17 @@ export default async function WorkspaceDetailPage({ params }: Props) {
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono font-semibold tracking-wider text-forest bg-forest/10 border border-forest/20 px-2.5 py-1 rounded-lg">
-                08 • TRỢ LÝ
+                08 • TRỢ LÝ KÝ ỨC
               </span>
               <span className="text-[10px] bg-forest text-white px-2.5 py-0.5 rounded-full font-semibold">
-                Gemini 3.5 Flash
+                Hỏi đáp & Tra cứu
               </span>
             </div>
             <h3 className="font-serif font-bold text-lg text-ink group-hover:text-forest transition-colors">
-              Trợ lý Ký ức & Xưởng AI
+              Trợ lý Ký ức & Biên soạn di sản
             </h3>
             <p className="text-xs text-ink-muted leading-relaxed">
-              Hỏi đáp thông minh cùng Google Gemini, đối soát dẫn nguồn chính xác từng giây ghi âm; bóc tách câu chuyện & chắp bút hồi ký tiền nhân.
+              Hỏi đáp thông minh và đối soát dẫn nguồn chính xác từng giây ghi âm; chắp bút và lưu giữ câu chuyện người thân.
             </p>
             <span className="text-xs text-forest font-semibold inline-block pt-1">Trải nghiệm ngay →</span>
           </Link>
